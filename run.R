@@ -1,4 +1,4 @@
-library(stringr);library(rebus);library(dplyr);library(purrr)
+library(dplyr);library(purrr)
 source('sim_functions.R')
 
 # Show all parameters
