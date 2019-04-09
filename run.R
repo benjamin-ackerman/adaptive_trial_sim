@@ -18,7 +18,7 @@ pb = params$pb[row_num]
 
 # Get results for gamma = 2
 results_adaptive = 1:10000 %>% 
-  map_df(~sim(n,pa,pb,FALSE)) %>% 
+  map_df(~sim(n,pa,pb,complete = FALSE, burn_in = TRUE)) %>% 
   group_by(pA,pB,n,method) %>% 
   summarise(expected_failure = ceiling(mean(n_failure)),
             sd_failure = sd(n_failure),
@@ -27,7 +27,7 @@ results_adaptive = 1:10000 %>%
 
 # Get results for complete
 results_random = 1:10000 %>% 
-  map_df(~sim(n,pa,pb,TRUE,burn_in=FALSE)) %>% 
+  map_df(~sim(n,pa,pb,complete = TRUE,burn_in = FALSE)) %>% 
   group_by(pA,pB,n,method) %>% 
   summarise(expected_failure = ceiling(mean(n_failure)),
             sd_failure = sd(n_failure),
