@@ -1,14 +1,15 @@
 library(dplyr);library(purrr)
 source('sim_functions.R')
 
-# Show all parameters
-params = data.frame(pa = c(0.9,0.9,0.9,0.9,0.7,0.7,0.5,0.3,0.2),
-                    pb = c(0.3,0.5,0.7,0.8,0.3,0.5,0.4,0.1,0.1),
-                    n = c(24,50,162,532,62,248,1036,158,532))
-
 # Get row number from command line
 temp = commandArgs(TRUE)
 row_num = as.numeric(temp[1])
+
+# Show all parameters
+params = data.frame(pa = c(0.9,0.9,0.9,0.9,0.7,0.7,0.5,0.3,0.2),
+                    pb = c(0.3,0.5,0.7,0.8,0.3,0.5,0.4,0.1,0.1),
+                    n = c(24,50,162,532,62,248,1036,158,532),
+                    stringsAsFactors = FALSE)
 
 # Set values for this run
 n = params$n[row_num]
@@ -17,7 +18,7 @@ pb = params$pb[row_num]
 
 # Get results for gamma = 2
 results_adaptive = 1:10000 %>% 
-  map_df(~sim(62,.7,.3,FALSE)) %>% 
+  map_df(~sim(n,pa,pb,FALSE)) %>% 
   group_by(pA,pB,n,method) %>% 
   summarise(expected_failure = ceiling(mean(n_failure)),
             sd_failure = sd(n_failure),
@@ -26,7 +27,7 @@ results_adaptive = 1:10000 %>%
 
 # Get results for complete
 results_random = 1:10000 %>% 
-  map_df(~sim(62,.7,.3,TRUE,burn_in=FALSE)) %>% 
+  map_df(~sim(n,pa,pb,TRUE,burn_in=FALSE)) %>% 
   group_by(pA,pB,n,method) %>% 
   summarise(expected_failure = ceiling(mean(n_failure)),
             sd_failure = sd(n_failure),
