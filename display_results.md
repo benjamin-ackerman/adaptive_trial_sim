@@ -1,7 +1,5 @@
 Maximizing power and minimizing treatment failures in clinical trials
 ================
-Benjamin Ackerman
-April 9, 2019
 
 This document contains the results from a simulation I conducted to replicate the simulation findings in Rosenberger & Hu (2004).
 
