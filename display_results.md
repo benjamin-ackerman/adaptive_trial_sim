@@ -8,6 +8,8 @@ This document contains the results from a simulation I conducted to replicate th
 Table 3:
 --------
 
+##### Simulated expected treatment failures (standard deviation) for complete randomization and the doubly-adaptive biased coin design with *γ* = 2, 10,000 replications
+
 |  *p*<sub>*A*</sub>|  *p*<sub>*B*</sub>|   *n*| Complete  | *γ* = 2   |
 |------------------:|------------------:|-----:|:----------|:----------|
 |                0.9|                0.3|    24| 10 (2.4)  | 7 (2.4)   |
@@ -22,6 +24,8 @@ Table 3:
 
 Table 4:
 --------
+
+##### Simulated maximum number of treatment failures for complete randomization and the doubly-adaptive biased coin design (DCBD) with *γ* = 2, 10,000 replications
 
 |  *p*<sub>*A*</sub>|  *p*<sub>*B*</sub>|   *n*|  Complete|  DBCD|
 |------------------:|------------------:|-----:|---------:|-----:|
