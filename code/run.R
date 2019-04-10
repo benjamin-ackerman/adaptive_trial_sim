@@ -51,5 +51,5 @@ p = ggplot(plot_results) +
        x = expression(n[failure])) +
   scale_fill_discrete(labels = scales::parse_format())
 
-ggsave(paste0("../figures/scenario_",row_num,".png"),p,width=8,height=7,units="in",scale=1.2)
+ggsave(paste0("../figures/scenario_",row_num,".pdf"),p,width=8,height=7,units="in",scale=1.2)
 
