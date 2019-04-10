@@ -1,4 +1,4 @@
-library(dplyr);library(purrr)
+library(dplyr);library(purrr);library(ggplot2);library(rlang)
 source('sim_functions.R')
 
 # Get row number from command line
@@ -16,25 +16,40 @@ n = params$n[row_num]
 pa = params$pa[row_num]
 pb = params$pb[row_num]
 
-# Get results for gamma = 2
+# Get results for DBCD gamma = 2
 results_adaptive = 1:10000 %>% 
   map_df(~sim(n,pa,pb,complete = FALSE, burn_in = TRUE)) %>% 
-  group_by(pA,pB,n,method) %>% 
-  summarise(expected_failure = ceiling(mean(n_failure)),
-            sd_failure = sd(n_failure),
-            max_failure = max(n_failure, na.rm=TRUE)) %>% 
-  ungroup()
+  mutate(method = "DBCD (gamma == 2)")
 
-# Get results for complete
+# Get results for completely random coin
 results_random = 1:10000 %>% 
-  map_df(~sim(n,pa,pb,complete = TRUE,burn_in = FALSE)) %>% 
+  map_df(~sim(n,pa,pb,complete = TRUE, burn_in = FALSE)) %>% 
+  mutate(method = "Complete")
+
+# Bind the two and write RDS file
+plot_results = results_adaptive %>% 
+  bind_rows(results_random)
+
+results = plot_results %>% 
   group_by(pA,pB,n,method) %>% 
   summarise(expected_failure = ceiling(mean(n_failure)),
             sd_failure = sd(n_failure),
             max_failure = max(n_failure, na.rm=TRUE)) %>% 
-  ungroup()
+  ungroup() %>% 
+  mutate(method = ifelse(method == "DBCD (gamma == 2)","Gamma = 2",method))
 
-# Paste the results together and save them to the cluster
-results = rbind(results_adaptive,results_random)
+saveRDS(results,file = paste0("../results/results_",row_num,".rds"))
 
-saveRDS(results,file = paste0("results_",row_num,".rds"))
+### Make and save plot of distribution of n_failure
+p = ggplot(plot_results) + 
+  geom_density(adjust = 2,aes(n_failure, stat(density),fill = method), alpha=0.5) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(title = "Distribution of Simulated Treatment Failures by Randomization Method",
+       subtitle = expr(paste(p[A]== !!pa,", ",p[B] == !!pb,", ",n == !!n)),
+       fill = "Method",
+       x = expression(n[failure])) +
+  scale_fill_discrete(labels = scales::parse_format())
+
+ggsave(paste0("../figures/scenario_",row_num,".png"),p,width=8,height=7,units="in",scale=1.2)
+
